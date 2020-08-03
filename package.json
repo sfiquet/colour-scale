@@ -1,0 +1,25 @@
+{
+  "name": "colour-scale",
+  "version": "1.0.0",
+  "description": "Exploration of colours based on perceptual lightness",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sfiquet/colour-scale.git"
+  },
+  "keywords": [],
+  "author": "Sylvie Fiquet",
+  "license": "ISC",
+  "homepage": "https://github.com/sfiquet/colour-scale#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "chroma-js": "^2.1.0"
+  }
+}
