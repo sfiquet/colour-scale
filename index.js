@@ -59,16 +59,6 @@ const chromaCalc = require('./chromacalc');
       paletteNode.appendChild(fragment);
     };
     
-    //let chromaCombine = (colour, lstar) => chroma(colour).luminance(lstar).css('hsl');
-
-    let createPalette = lstarScale => ({
-      grey: lstarScale.map(lstar => chromaCombine('white', lstar)),
-      red: lstarScale.map(lstar => chromaCombine('red', lstar)),
-      yellow: lstarScale.map(lstar => chromaCombine('yellow', lstar)),
-      blue: lstarScale.map(lstar => chromaCombine('blue', lstar)),
-    });
-
-    //let chromaGreyScale = () => chroma.scale(['black', 'white']).colors(11);
     let chromaLabCombine = (colour, lstar) => {
       let labCol = chroma(colour).lab();
       console.log(labCol);
@@ -78,7 +68,8 @@ const chromaCalc = require('./chromacalc');
       }*/
       return res;
     };
-    let createPalette2 = lstarScale => ({
+    
+    let createPalette = lstarScale => ({
       grey: lstarScale.map(lstar => chroma.lab(lstar * 100, 0, 0).hex()),
 
       red: lstarScale.map(lstar => chromaLabCombine('red', lstar).hex()),
@@ -91,8 +82,7 @@ const chromaCalc = require('./chromacalc');
       // it's the l* in CIEl*a*b*
       // it's different from luminance, which is linear and expresses the amount of photons.
       let lstarScale = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1];
-      //let chromaPalette = createPalette(lstarScale);
-      let chromaPalette = createPalette2(lstarScale);
+      let chromaPalette = createPalette(lstarScale);
       console.log(chromaPalette);
 
       let container = document.getElementById('container');
