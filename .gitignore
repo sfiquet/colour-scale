@@ -1,3 +1,9 @@
+# Node
 /node_modules
 
+# Parcel
+/.cache
+/dist
+
+# misc
 .DS_Store

@@ -1,3 +1,6 @@
+const chroma = require('chroma-js');
+const chromaCalc = require('./chromacalc');
+
 (() => {
   window.onload = (e) => {
     /*
@@ -56,7 +59,7 @@
       paletteNode.appendChild(fragment);
     };
     
-    let chromaCombine = (colour, lstar) => chroma(colour).luminance(lstar).css('hsl');
+    //let chromaCombine = (colour, lstar) => chroma(colour).luminance(lstar).css('hsl');
 
     let createPalette = lstarScale => ({
       grey: lstarScale.map(lstar => chromaCombine('white', lstar)),
