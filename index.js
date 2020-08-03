@@ -1,5 +1,5 @@
 const chroma = require('chroma-js');
-const chromaCalc = require('./chromacalc');
+import chromaCalc from './chromacalc.js';
 
 (() => {
   window.onload = (e) => {
@@ -30,6 +30,45 @@ const chromaCalc = require('./chromacalc');
     };
     */
     
+    let chromaLabCombine = (colour, lstar) => {
+      let labCol = chroma(colour).lab();
+      console.log(labCol);
+      let res = chroma.lab(lstar, labCol[1], labCol[2]);
+      /*if (res.clipped()){
+        res = chroma.lab(lstar, 0, 0);
+      }*/
+      return res;
+    };
+
+/*
+    let calculatePalette = lstarScale => ({
+      grey: lstarScale.map(lstar => chroma.lab(lstar, 0, 0).hex()),
+
+      red: lstarScale.map(lstar => chromaLabCombine('red', lstar).hex()),
+      yellow: lstarScale.map(lstar => chromaLabCombine('yellow', lstar).hex()),
+      blue: lstarScale.map(lstar => chromaLabCombine('blue', lstar).hex()),
+    });
+    */
+    let calculatePalette = lstarScale => ({
+      grey: chromaCalc.createGreyScale(lstarScale),
+
+      red: chromaCalc.createColourScale('red', lstarScale),
+      yellow: chromaCalc.createColourScale('yellow', lstarScale),
+      blue: chromaCalc.createColourScale('blue', lstarScale),
+    });
+
+    let calculateAllPalettes = () => {
+      // l* is perceptual lightness. It's non-linear to reflect human perception.
+      // it's the l* in CIEl*a*b*
+      // it's different from luminance, which is linear and expresses the amount of photons.
+      let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
+      let chromaPalette = calculatePalette(lstarScale);
+      console.log(chromaPalette);
+
+      return [chromaPalette];
+    };
+
     let initPalette = (paletteNode, palette) => {
       let fragment = new DocumentFragment();
       
@@ -59,57 +98,33 @@ const chromaCalc = require('./chromacalc');
       paletteNode.appendChild(fragment);
     };
     
-    let chromaLabCombine = (colour, lstar) => {
-      let labCol = chroma(colour).lab();
-      console.log(labCol);
-      let res = chroma.lab(lstar, labCol[1], labCol[2]);
-      /*if (res.clipped()){
-        res = chroma.lab(lstar, 0, 0);
-      }*/
-      return res;
+    let renderPalette = palette => {
+      let paletteNode = document.createElement('div');
+      
+      paletteNode.className = 'palette';
+      initPalette(paletteNode, palette);
+
+      return paletteNode;
     };
 
-    let createPalette = lstarScale => ({
-      grey: lstarScale.map(lstar => chroma.lab(lstar, 0, 0).hex()),
-
-      red: lstarScale.map(lstar => chromaLabCombine('red', lstar).hex()),
-      yellow: lstarScale.map(lstar => chromaLabCombine('yellow', lstar).hex()),
-      blue: lstarScale.map(lstar => chromaLabCombine('blue', lstar).hex()),
-    });
-
-    let createPalettes = () => {
-      // l* is perceptual lightness. It's non-linear to reflect human perception.
-      // it's the l* in CIEl*a*b*
-      // it's different from luminance, which is linear and expresses the amount of photons.
-      let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-      let chromaPalette = createPalette(lstarScale);
-      console.log(chromaPalette);
-
-      let container = document.getElementById('container');
+    let renderAllPalettes = palettes => {
+      // work in a fragment to avoid triggering intermediate renders
       let fragment = new DocumentFragment();
 
-      // chroma palette
-      let paletteNode = document.createElement('div');
-      paletteNode.className = 'palette';
-      paletteNode.id = 'chromaPalette';
-      fragment.appendChild(paletteNode);
-      initPalette(paletteNode, chromaPalette);
+      // create an element and its children for each palette
+      palettes.forEach(palette => {
+        let el = renderPalette(palette);
+        fragment.appendChild(el);
+      });
 
+      // attach to container, triggering the re-render
+      let container = document.getElementById('container');
       container.appendChild(fragment);
     };
 
     let init = () => {
-      // debug
-      /*
-      let col;
-      col = chromaLabCombine('blue', 0);
-      console.log(col, col.clipped());
-      col = chromaLabCombine('blue', .5);
-      console.log(col, col.clipped());
-      */
-      
-      createPalettes();
-//      render();      
+      const palettes = calculateAllPalettes();
+      renderAllPalettes(palettes);
     };
     
     // Generate the colour swatches
