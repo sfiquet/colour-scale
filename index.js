@@ -62,15 +62,15 @@ const chromaCalc = require('./chromacalc');
     let chromaLabCombine = (colour, lstar) => {
       let labCol = chroma(colour).lab();
       console.log(labCol);
-      let res = chroma.lab(lstar * 100, labCol[1], labCol[2]);
+      let res = chroma.lab(lstar, labCol[1], labCol[2]);
       /*if (res.clipped()){
-        res = chroma.lab(lstar * 100, 0, 0);
+        res = chroma.lab(lstar, 0, 0);
       }*/
       return res;
     };
-    
+
     let createPalette = lstarScale => ({
-      grey: lstarScale.map(lstar => chroma.lab(lstar * 100, 0, 0).hex()),
+      grey: lstarScale.map(lstar => chroma.lab(lstar, 0, 0).hex()),
 
       red: lstarScale.map(lstar => chromaLabCombine('red', lstar).hex()),
       yellow: lstarScale.map(lstar => chromaLabCombine('yellow', lstar).hex()),
@@ -81,7 +81,7 @@ const chromaCalc = require('./chromacalc');
       // l* is perceptual lightness. It's non-linear to reflect human perception.
       // it's the l* in CIEl*a*b*
       // it's different from luminance, which is linear and expresses the amount of photons.
-      let lstarScale = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1];
+      let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
       let chromaPalette = createPalette(lstarScale);
       console.log(chromaPalette);
 
@@ -100,12 +100,14 @@ const chromaCalc = require('./chromacalc');
 
     let init = () => {
       // debug
+      /*
       let col;
       col = chromaLabCombine('blue', 0);
       console.log(col, col.clipped());
       col = chromaLabCombine('blue', .5);
       console.log(col, col.clipped());
-
+      */
+      
       createPalettes();
 //      render();      
     };
