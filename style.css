@@ -9,6 +9,13 @@ h1 {
 
 .container {
   margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.palette {
+  margin: .5rem auto;
 }
 
 .row {
@@ -16,8 +23,8 @@ h1 {
 }
 
 .swatch {
-  height: 60px;
-  width: 60px;
+  height: 1.75rem;
+  width: 1.75rem;
   background-color: orange;
   display: flex;
   flex-direction: column;
@@ -26,12 +33,50 @@ h1 {
 }
 
 .hue-name {
-  height: 60px;
-  width: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 1.75rem;
+  width: 5rem;
+  display: none;
 }
 
+.hue-scale {
+  display: flex;
+}
 
+@media screen and (min-width: 400px){
+  .hue-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+}
+
+@media screen and (min-width: 768px){
+  .swatch {
+    height: 3rem;
+    width: 3rem;
+  }
+  .hue-name {
+    height: 3rem;
+    width: 6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .palette {
+    margin: 1rem;
+  }
+}
+
+@media screen and (min-width: 960px){
+  .swatch {
+    height: 4rem;
+    width: 4rem;
+  }
+  .hue-name {
+    height: 4rem;
+    width: 6rem;
+  }
+}

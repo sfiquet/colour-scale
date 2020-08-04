@@ -20,6 +20,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
+    "ac-colors": "^1.4.1",
     "chroma-js": "^2.1.0"
   }
 }

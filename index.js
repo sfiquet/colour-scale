@@ -1,5 +1,6 @@
-const chroma = require('chroma-js');
 import chromaCalc from './chromacalc.js';
+import acColorsCalc from './ac-colorscalc.js';
+const calcLibraries = [chromaCalc, acColorsCalc];
 
 (() => {
   window.onload = (e) => {
@@ -29,32 +30,22 @@ import chromaCalc from './chromacalc.js';
       renderPalette();
     };
     */
-    
-    let chromaLabCombine = (colour, lstar) => {
-      let labCol = chroma(colour).lab();
-      console.log(labCol);
-      let res = chroma.lab(lstar, labCol[1], labCol[2]);
-      /*if (res.clipped()){
-        res = chroma.lab(lstar, 0, 0);
-      }*/
-      return res;
-    };
 
-/*
-    let calculatePalette = lstarScale => ({
-      grey: lstarScale.map(lstar => chroma.lab(lstar, 0, 0).hex()),
+    let calculatePalette = (lstarScale, lib) => ({
+      grey: lib.createGreyScale(lstarScale),
 
-      red: lstarScale.map(lstar => chromaLabCombine('red', lstar).hex()),
-      yellow: lstarScale.map(lstar => chromaLabCombine('yellow', lstar).hex()),
-      blue: lstarScale.map(lstar => chromaLabCombine('blue', lstar).hex()),
-    });
-    */
-    let calculatePalette = lstarScale => ({
-      grey: chromaCalc.createGreyScale(lstarScale),
-
-      red: chromaCalc.createColourScale('red', lstarScale),
-      yellow: chromaCalc.createColourScale('yellow', lstarScale),
-      blue: chromaCalc.createColourScale('blue', lstarScale),
+      red: lib.createColourScale('#ff0000', lstarScale),
+      orange: lib.createColourScale('#ff8000', lstarScale),
+      yellow: lib.createColourScale('#ffff00', lstarScale),
+      'lime green': lib.createColourScale('#80ff00', lstarScale),
+      green: lib.createColourScale('#008000', lstarScale),
+      'blue-green': lib.createColourScale('#00ff80', lstarScale),
+      cyan: lib.createColourScale('#00ffff', lstarScale),
+      'sky blue': lib.createColourScale('#0080ff', lstarScale),
+      blue: lib.createColourScale('#0000ff', lstarScale),
+      purple: lib.createColourScale('#8000ff', lstarScale),
+      magenta: lib.createColourScale('#ff00ff', lstarScale),
+      pink: lib.createColourScale('#ff0080', lstarScale),
     });
 
     let calculateAllPalettes = () => {
@@ -63,17 +54,13 @@ import chromaCalc from './chromacalc.js';
       // it's different from luminance, which is linear and expresses the amount of photons.
       let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-      let chromaPalette = calculatePalette(lstarScale);
-      console.log(chromaPalette);
-
-      return [chromaPalette];
+      return calcLibraries.map(lib => calculatePalette(lstarScale, lib));
     };
 
     let initPalette = (paletteNode, palette) => {
       let fragment = new DocumentFragment();
       
-//      let hues = ['red', 'orange', 'yellow', 'lime green', 'green', 'blue-green', 'cyan', 'sky blue', 'blue', 'purple', 'magenta', 'pink'];
-      let hues = ['grey', 'red', 'yellow', 'blue'];
+      let hues = ['grey', 'red', 'orange', 'yellow', 'lime green', 'green', 'blue-green', 'cyan', 'sky blue', 'blue', 'purple', 'magenta', 'pink'];
       
       hues.forEach((hue, id) => {
         let row = document.createElement('div');
@@ -84,12 +71,16 @@ import chromaCalc from './chromacalc.js';
         name.className = 'hue-name';
         row.appendChild(name);
         
+        let scale = document.createElement('div');
+        scale.className = 'hue-scale';
+        row.appendChild(scale);
+        
 
         palette[hue].forEach(cssColour => {
           let swatch = document.createElement('div');
           swatch.className = 'swatch';
           swatch.style.backgroundColor = cssColour;
-          row.appendChild(swatch);
+          scale.appendChild(swatch);
         });
         
         fragment.appendChild(row);
