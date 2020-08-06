@@ -1,6 +1,7 @@
 import chromaCalc from './chromacalc.js';
+import chromaLchCalc from './chromalchcalc.js';
 import acColorsCalc from './ac-colorscalc.js';
-const calcLibraries = [chromaCalc, acColorsCalc];
+const calcLibraries = [chromaCalc, chromaLchCalc, acColorsCalc];
 
 (() => {
   window.onload = (e) => {
