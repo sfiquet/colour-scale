@@ -39,7 +39,7 @@ const calcLibraries = [chromaCalc, chromaLchCalc, acColorsCalc];
       orange: lib.createColourScale('#ff8000', lstarScale),
       yellow: lib.createColourScale('#ffff00', lstarScale),
       'lime green': lib.createColourScale('#80ff00', lstarScale),
-      green: lib.createColourScale('#008000', lstarScale),
+      green: lib.createColourScale('#00ff00', lstarScale),
       'blue-green': lib.createColourScale('#00ff80', lstarScale),
       cyan: lib.createColourScale('#00ffff', lstarScale),
       'sky blue': lib.createColourScale('#0080ff', lstarScale),
