@@ -64,12 +64,12 @@ const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc]
       
       let hues = ['grey', 'red', 'orange', 'yellow', 'lime green', 'green', 'blue-green', 'cyan', 'sky blue', 'blue', 'purple', 'magenta', 'pink'];
       
-      hues.forEach((hue, id) => {
+      hues.forEach(hue => {
         let row = document.createElement('div');
         row.className = 'row';
         
         let name = document.createElement('div');
-        name.innerText = hues[id];
+        name.innerText = hue;
         name.className = 'hue-name';
         row.appendChild(name);
         
