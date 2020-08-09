@@ -4,6 +4,23 @@ import acColorsCalc from './ac-colorscalc.js';
 import acColorsLchCalc from './ac-colorslchcalc.js';
 const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc];
 
+const HUES = [
+  {name: 'grey'},
+  {name: 'red', hex: '#ff0000'}, 
+  {name: 'orange', hex: '#ff8000'}, 
+  {name: 'yellow', hex: '#ffff00'}, 
+  {name: 'lime green', hex: '#80ff00'}, 
+  {name: 'green', hex: '#00ff00'}, 
+  {name: 'blue-green', hex: '#00ff80'}, 
+  {name: 'cyan', hex: '#00ffff'}, 
+  {name: 'sky blue', hex: '#0080ff'}, 
+  {name: 'blue', hex: '#0000ff'}, 
+  {name: 'purple', hex: '#8000ff'}, 
+  {name: 'magenta', hex: '#ff00ff'}, 
+  {name: 'pink', hex: '#ff0080'},
+];
+
+
 (() => {
   window.onload = (e) => {
     /*
@@ -33,22 +50,14 @@ const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc]
     };
     */
 
-    let calculatePalette = (lstarScale, lib) => ({
-      grey: lib.createGreyScale(lstarScale),
-
-      red: lib.createColourScale('#ff0000', lstarScale),
-      orange: lib.createColourScale('#ff8000', lstarScale),
-      yellow: lib.createColourScale('#ffff00', lstarScale),
-      'lime green': lib.createColourScale('#80ff00', lstarScale),
-      green: lib.createColourScale('#00ff00', lstarScale),
-      'blue-green': lib.createColourScale('#00ff80', lstarScale),
-      cyan: lib.createColourScale('#00ffff', lstarScale),
-      'sky blue': lib.createColourScale('#0080ff', lstarScale),
-      blue: lib.createColourScale('#0000ff', lstarScale),
-      purple: lib.createColourScale('#8000ff', lstarScale),
-      magenta: lib.createColourScale('#ff00ff', lstarScale),
-      pink: lib.createColourScale('#ff0080', lstarScale),
-    });
+    let calculatePalette = (lstarScale, lib) => HUES.reduce((accObj, hue) => {
+      if (hue.name === 'grey'){
+        accObj[hue.name] = lib.createGreyScale(lstarScale);
+      } else {
+        accObj[hue.name] = lib.createColourScale(hue.hex, lstarScale);
+      }
+      return accObj;
+    }, {});
 
     let calculateAllPalettes = () => {
       // l* is perceptual lightness. It's non-linear to reflect human perception.
@@ -62,14 +71,12 @@ const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc]
     let initPalette = (paletteNode, palette) => {
       let fragment = new DocumentFragment();
       
-      let hues = ['grey', 'red', 'orange', 'yellow', 'lime green', 'green', 'blue-green', 'cyan', 'sky blue', 'blue', 'purple', 'magenta', 'pink'];
-      
-      hues.forEach(hue => {
+      HUES.forEach(hue => {
         let row = document.createElement('div');
         row.className = 'row';
         
         let name = document.createElement('div');
-        name.innerText = hue;
+        name.innerText = hue.name;
         name.className = 'hue-name';
         row.appendChild(name);
         
@@ -78,7 +85,7 @@ const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc]
         row.appendChild(scale);
         
 
-        palette[hue].forEach(cssColour => {
+        palette[hue.name].forEach(cssColour => {
           let swatch = document.createElement('div');
           swatch.className = 'swatch';
           swatch.style.backgroundColor = cssColour;
