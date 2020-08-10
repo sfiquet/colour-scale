@@ -25,120 +25,88 @@ const HUES = [
   {name: 'pink', hex: '#ff0080'},
 ];
 
+window.onload = (e) => {
+  let calculatePalette = (lstarScale, lib) => HUES.reduce((accObj, hue) => {
+    if (hue.name === 'grey'){
+      accObj[hue.name] = lib.createGreyScale(lstarScale);
+    } else {
+      accObj[hue.name] = lib.createColourScale(hue.hex, lstarScale);
+    }
+    return accObj;
+  }, {});
 
-(() => {
-  window.onload = (e) => {
-    /*
-    let renderAnnotatedSwatch = (el, h, s, l) => {      
-      el.style.backgroundColor = `hsl(${h}, ${s}%, ${l}%)`;
-      
-      el.innerHTML = `<div>${h}</div> <div>${s}%</div> <div>${l}%</div>`;
-      
-      if (l < 40){
-        el.style.color = `hsl(${h}, ${s}%, 100%)`;
-      } else {
-        el.style.color = `hsl(${h}, ${s}%, 0%)`;
-      }
+  let calculateAllPalettes = () => {
+    // l* is perceptual lightness. It's non-linear to reflect human perception.
+    // it's the l* in CIEl*a*b*
+    // it's different from luminance, which is linear and expresses the amount of photons.
+    let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-    };
+    return calcLibraries.map(libObj => ({label: libObj.label, data: calculatePalette(lstarScale, libObj.lib)}));
+  };
+
+  let initPalette = (paletteNode, palette) => {
+    let fragment = new DocumentFragment();
+
+    let title = document.createElement('h2');
+    title.innerText = palette.label;
+    fragment.appendChild(title);
     
-    let renderPalette = () => {
-      let sat = 100;
-      let swatches = document.getElementsByClassName('swatch');
-      Array.prototype.forEach.call(swatches, el => {
-        renderAnnotatedSwatch(el, el.dataset.hue, sat, el.dataset.light);
-      });
-    };
-        
-    let render = () => {
-      renderPalette();
-    };
-    */
-
-    let calculatePalette = (lstarScale, lib) => HUES.reduce((accObj, hue) => {
-      if (hue.name === 'grey'){
-        accObj[hue.name] = lib.createGreyScale(lstarScale);
-      } else {
-        accObj[hue.name] = lib.createColourScale(hue.hex, lstarScale);
-      }
-      return accObj;
-    }, {});
-
-    let calculateAllPalettes = () => {
-      // l* is perceptual lightness. It's non-linear to reflect human perception.
-      // it's the l* in CIEl*a*b*
-      // it's different from luminance, which is linear and expresses the amount of photons.
-      let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-
-      return calcLibraries.map(libObj => ({label: libObj.label, data: calculatePalette(lstarScale, libObj.lib)}));
-    };
-
-    let initPalette = (paletteNode, palette) => {
-      let fragment = new DocumentFragment();
-
-      let title = document.createElement('h2');
-      title.innerText = palette.label;
-      fragment.appendChild(title);
+    HUES.forEach(hue => {
+      let row = document.createElement('div');
+      row.className = 'row';
       
-      HUES.forEach(hue => {
-        let row = document.createElement('div');
-        row.className = 'row';
-        
-        let name = document.createElement('div');
-        name.innerText = hue.name;
-        name.className = 'hue-name';
-        row.appendChild(name);
-        
-        let scale = document.createElement('div');
-        scale.className = 'hue-scale';
-        row.appendChild(scale);
-        
+      let name = document.createElement('div');
+      name.innerText = hue.name;
+      name.className = 'hue-name';
+      row.appendChild(name);
+      
+      let scale = document.createElement('div');
+      scale.className = 'hue-scale';
+      row.appendChild(scale);
+      
 
-        palette.data[hue.name].forEach(cssColour => {
-          let swatch = document.createElement('div');
-          swatch.className = 'swatch';
-          swatch.style.backgroundColor = cssColour;
-          scale.appendChild(swatch);
-        });
-        
-        fragment.appendChild(row);
+      palette.data[hue.name].forEach(cssColour => {
+        let swatch = document.createElement('div');
+        swatch.className = 'swatch';
+        swatch.style.backgroundColor = cssColour;
+        scale.appendChild(swatch);
       });
       
-      paletteNode.appendChild(fragment);
-    };
+      fragment.appendChild(row);
+    });
     
-    let renderPalette = palette => {
-      let paletteNode = document.createElement('div');
-      
-      paletteNode.className = 'palette';
-      initPalette(paletteNode, palette);
-
-      return paletteNode;
-    };
-
-    let renderAllPalettes = palettes => {
-      // work in a fragment to avoid triggering intermediate renders
-      let fragment = new DocumentFragment();
-
-      // create an element and its children for each palette
-      palettes.forEach(palette => {
-        let el = renderPalette(palette);
-        fragment.appendChild(el);
-      });
-
-      // attach to container, triggering the re-render
-      let container = document.getElementById('container');
-      container.appendChild(fragment);
-    };
-
-    let init = () => {
-      const palettes = calculateAllPalettes();
-      renderAllPalettes(palettes);
-    };
-    
-    // Generate the colour swatches
-    init();    
+    paletteNode.appendChild(fragment);
   };
   
-})();
+  let renderPalette = palette => {
+    let paletteNode = document.createElement('div');
+    
+    paletteNode.className = 'palette';
+    initPalette(paletteNode, palette);
 
+    return paletteNode;
+  };
+
+  let renderAllPalettes = palettes => {
+    // work in a fragment to avoid triggering intermediate renders
+    let fragment = new DocumentFragment();
+
+    // create an element and its children for each palette
+    palettes.forEach(palette => {
+      let el = renderPalette(palette);
+      fragment.appendChild(el);
+    });
+
+    // attach to container, triggering the re-render
+    let container = document.getElementById('container');
+    container.appendChild(fragment);
+  };
+
+  let init = () => {
+    const palettes = calculateAllPalettes();
+    renderAllPalettes(palettes);
+  };
+  
+  // Generate the colour swatches
+  init();    
+};
