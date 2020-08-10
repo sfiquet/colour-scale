@@ -2,7 +2,12 @@ import chromaCalc from './chromacalc.js';
 import chromaLchCalc from './chromalchcalc.js';
 import acColorsCalc from './ac-colorscalc.js';
 import acColorsLchCalc from './ac-colorslchcalc.js';
-const calcLibraries = [chromaLchCalc, acColorsLchCalc, chromaCalc, acColorsCalc];
+const calcLibraries = [
+  {label: 'LCh chroma interpolation with chroma.js', lib: chromaLchCalc}, 
+  {label: 'LCh chroma interpolation with ac-colors.js', lib: acColorsLchCalc}, 
+  {label: 'Lab and RGB clipping with chroma.js', lib: chromaCalc}, 
+  {label: 'Lab and RGB clipping with ac-colors', lib: acColorsCalc},
+];
 
 const HUES = [
   {name: 'grey'},
@@ -65,11 +70,15 @@ const HUES = [
       // it's different from luminance, which is linear and expresses the amount of photons.
       let lstarScale = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-      return calcLibraries.map(lib => calculatePalette(lstarScale, lib));
+      return calcLibraries.map(libObj => ({label: libObj.label, data: calculatePalette(lstarScale, libObj.lib)}));
     };
 
     let initPalette = (paletteNode, palette) => {
       let fragment = new DocumentFragment();
+
+      let title = document.createElement('h2');
+      title.innerText = palette.label;
+      fragment.appendChild(title);
       
       HUES.forEach(hue => {
         let row = document.createElement('div');
@@ -85,7 +94,7 @@ const HUES = [
         row.appendChild(scale);
         
 
-        palette[hue.name].forEach(cssColour => {
+        palette.data[hue.name].forEach(cssColour => {
           let swatch = document.createElement('div');
           swatch.className = 'swatch';
           swatch.style.backgroundColor = cssColour;
